@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Amazon Clone</title>
+  <style>
+    /* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f3f3f3;
+  color: #111;
+}
+
+/* Header */
+header {
+  background-color: #232f3e;
+  padding: 15px 20px;
+  color: #fff;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Main Content */
+main {
+  max-width: 1200px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.checkout-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-section h2 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* Cart Item List */
+.product-container {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.cart-item img {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+
+.cart-item .product-details {
+  flex: 1;
+}
+
+.cart-item h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.cart-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #B12704;
+  margin-top: 5px;
+}
+
+/* Summary Section */
+.summary {
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.summary p {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.checkout-btn {
+  background-color: #ffd814;
+  border: 1px solid #f0c14b;
+  color: #111;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #f7ca00;
+}
+
+.checkout-btn:focus {
+  outline: 2px solid #c88719;
+  outline-offset: 2px;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <h1>Checkout</h1>
+  </header>
+
+  <!-- Checkout Content -->
+  <main>
+    <div class="checkout-section">
+      <h2>Your Items</h2>
+      <div class="product-container" id="checkout-cart-container">
+        <!-- Checkout items will be dynamically loaded here -->
+      </div>
+      <div class="summary">
+        <p>Total Price: ₹<span id="checkout-total-price">0.00</span></p>
+        <button class="checkout-btn" onclick="completePayment()">Checkout Payment</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Load cart data from localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function displayCheckoutCart() {
+      const checkoutCartContainer = document.getElementById("checkout-cart-container");
+      const checkoutTotalPrice = document.getElementById("checkout-total-price");
+
+      checkoutCartContainer.innerHTML = ""; // Clear previous items
+      let total = 0;
+
+      cart.forEach(item => {
+        const cartItemDiv = document.createElement("div");
+        cartItemDiv.classList.add("cart-item");
+        cartItemDiv.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="product-details">
+            <h3>${item.name}</h3>
+            <p class="cart-price">₹${item.price.toFixed(2)}</p>
+          </div>
+        `;
+        checkoutCartContainer.appendChild(cartItemDiv);
+        total += item.price;
+      });
+
+      // Update total price
+      checkoutTotalPrice.innerText = total.toFixed(2);
+    }
+
+    function completePayment() {
+      alert("Payment Completed! Thank you for your purchase.");
+      localStorage.removeItem("cart"); // Clear cart after checkout
+      window.location.href = "index.html"; // Redirect back to home page
+    }
+
+    // Load checkout cart on page load
+    displayCheckoutCart();
+  </script>
+</body>
+</html>
