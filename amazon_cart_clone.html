@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Clone</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    * {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #131921;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.logo {
+  height: 40px;
+  align-self: center;
+}
+
+.location {
+  color: #ecb707;
+  font-size: 12px;
+  margin-right: 20px;
+}
+.search-bar-wrapper {
+  flex-grow: 1;
+  display: flex;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  border: 10px;
+  border-radius: 4px 0 0 4px;
+}
+
+.search-btn {
+  padding: 10px;
+  background-color: #febd69;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  gap: 50px;
+  margin-left: 800px;
+}
+
+.nav-links span {
+  text-align: center;
+  font-size: 12px;
+  font-weight:400;
+}
+
+.product-section, .cart-section {
+  padding: 20px;
+  font-weight: bolder;
+  
+}
+
+.product-list, .product-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.product, .cart-item {
+  display: flex;
+  border: 1px solid #ddd;
+  padding: 15px;
+  align-items: center;
+}
+
+.product img, .cart-item img {
+  width: 100px;
+  height: auto;
+  margin-right: 15px;
+}
+
+.product-details {
+  flex-grow: 1;
+}
+
+.product-details h3 {
+  font-size: 16px;
+  color: #007185;
+  margin: 0;
+}
+
+.product-price, .cart-price {
+  font-size: 18px;
+  color: #b12704;
+}
+
+.product-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.summary {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #f3f3f3;
+  border-radius: 4px;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #ffd814;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.checkout-btn:hover {
+  background-color: #f7ca00;
+}
+
+  </style>
+<body>
+  <!-- Header Section -->
+  <header>
+    <div class="navbar">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo" class="logo">
+      <div class="location">
+        <span>Deliver to</span>
+        <strong>Manipal 576104</strong>
+      </div>
+      <div class="search-bar-wrapper">
+        <input type="text" placeholder="Search Amazon.in" class="search-bar">
+        <button class="search-btn">&#128269;</button>
+      </div>
+      <div class="nav-links">
+        <span>Hello, Sign in<br><strong>Account & Lists</strong></span>
+        <span>Returns<br><strong>& Orders</strong></span>
+        <span>Cart (<span id="cart-count">0</span>)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="product-section">
+      <h2>Products</h2>
+      <div class="product-list" id="product-list">
+        <!-- Products will be dynamically inserted here by JavaScript -->
+      </div>
+    </div>
+    <div class="cart-section">
+      <div class="cart-header">
+        <h1>Shopping Cart</h1>
+        <p>Price</p>
+      </div>
+      <div class="cart-main">
+        <div class="product-container" id="cart-container">
+          <!-- Cart items will be dynamically inserted here by JavaScript -->
+        </div>
+        <div class="summary">
+          <p>Subtotal (<span id="cart-item-count">0 items</span>): ₹<span id="total-price">0.00</span></p>
+          <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Buy</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  
+</body>
+<script>
+    const products = [
+  { id: 1, name: "Pink Mechanical Keyboard", price: 3870.00, image: "img2.jpg" },
+  { id: 2, name: "Kindle", price: 4199.00, image: "img4.jpg" }
+];
+
+let cart = [];
+
+// Display products
+const productList = document.getElementById("product-list");
+products.forEach(product => {
+  const productDiv = document.createElement("div");
+  productDiv.classList.add("product");
+  productDiv.innerHTML = `
+    <img src="${product.image}" alt="${product.name}">
+    <div class="product-details">
+      <h3>${product.name}</h3>
+      <p class="product-price">₹${product.price.toFixed(2)}</p>
+      <button onclick="addToCart(${product.id})">Add to Cart</button>
+    </div>
+  `;
+  productList.appendChild(productDiv);
+});
+
+// Add to Cart
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  cart.push(product);
+  updateCartDisplay();
+}
+
+// Remove from Cart
+function removeFromCart(productId) {
+  cart = cart.filter(p => p.id !== productId);
+  updateCartDisplay();
+}
+
+// Update Cart Display
+function updateCartDisplay() {
+  const cartContainer = document.getElementById("cart-container");
+  const cartCount = document.getElementById("cart-count");
+  const cartItemCount = document.getElementById("cart-item-count");
+  const totalPriceElement = document.getElementById("total-price");
+
+  cartContainer.innerHTML = "";  // Clear previous items
+  cart.forEach(item => {
+    const cartItemDiv = document.createElement("div");
+    cartItemDiv.classList.add("cart-item");
+    cartItemDiv.innerHTML = `
+      <img src="${item.image}" alt="${item.name}">
+      <div class="product-details">
+        <h3>${item.name}</h3>
+        <p class="cart-price">₹${item.price.toFixed(2)}</p>
+        <button onclick="removeFromCart(${item.id})">Remove</button>
+      </div>
+    `;
+    cartContainer.appendChild(cartItemDiv);
+  });
+
+  // Update cart count and total price
+  cartCount.innerText = cart.length;
+  cartItemCount.innerText = `${cart.length} items`;
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  totalPriceElement.innerText = total.toFixed(2);
+}
+
+// Save cart data to localStorage and redirect to checkout page
+function proceedToCheckout() {
+  localStorage.setItem("cart", JSON.stringify(cart));
+  window.location.href = "checkout.html";
+}
+
+</script>
+</html>
