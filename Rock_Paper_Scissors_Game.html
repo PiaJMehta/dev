@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rock Paper Scissors</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        /* styles.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: black;
+  color:palevioletred;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #e30e63;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 1000;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.js-result,
+.js-moves,
+.js-score {
+  font-size: 1.2em;
+  margin-top: 15px;
+}
+
+.reset-score-button {
+  background-color: purple;
+  color: white;
+  margin-top: 20px;
+}
+
+.reset-score-button:hover {
+  background-color: pink;
+}
+/* styles.css */
+
+.congrats-message {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: palevioletred;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+}
+
+
+    </style>
+  </head>
+  <body>
+    <p class="title">Rock Paper Scissors</p>
+    <button onclick="playGame('rock')">
+      <img src="rock-emoji.png" alt="Rock"> Rock
+    </button>
+    <button onclick="playGame('paper')">
+      <img src="paper-emoji.png" alt="Paper"> Paper
+    </button>
+    <button onclick="playGame('scissors')">
+      <img src="scissors-emoji.png" alt="Scissors"> Scissors
+    </button>
+
+    <p class="js-result result"></p>
+    <p class="js-moves"></p>
+    <p class="js-score score"></p>
+
+    <button onclick="
+      score.wins = 0;
+      score.losses = 0;
+      score.ties = 0;
+      localStorage.removeItem('score');
+      updateScoreElement();
+    " class="reset-score-button">Reset Score</button>
+
+<script>
+    let score = JSON.parse(localStorage.getItem('score')) || {
+      wins: 0,
+      losses: 0,
+      ties: 0
+    };
+  
+    function playGame(playerMove) {
+      const computerMove = pickComputerMove();
+      let result = '';
+  
+      if (playerMove === 'scissors') {
+        result = computerMove === 'rock' ? 'You lose.' : (computerMove === 'paper' ? 'You win.' : 'Tie.');
+      } else if (playerMove === 'paper') {
+        result = computerMove === 'rock' ? 'You win.' : (computerMove === 'paper' ? 'Tie.' : 'You lose.');
+      } else if (playerMove === 'rock') {
+        result = computerMove === 'rock' ? 'Tie.' : (computerMove === 'paper' ? 'You lose.' : 'You win.');
+      }
+  
+      if (result === 'You win.') {
+        score.wins++;
+        displayCongratulations();  // Trigger confetti and congratulations message
+      } else if (result === 'You lose.') {
+        score.losses++;
+      } else {
+        score.ties++;
+      }
+  
+      localStorage.setItem('score', JSON.stringify(score));
+      updateScoreElement();
+      document.querySelector('.js-result').innerText = result;
+      document.querySelector('.js-moves').innerText = `You: ${playerMove}, Computer: ${computerMove}`;
+    }
+  
+    function displayCongratulations() {
+      const congratsMessage = document.createElement('p');
+      congratsMessage.innerText = "🎉 Congratulations! You've won! 🎉";
+      congratsMessage.className = 'congrats-message';
+      document.body.appendChild(congratsMessage);
+  
+      // Trigger confetti animation
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+  
+      // Remove the message after a few seconds
+      setTimeout(() => {
+        congratsMessage.remove();
+      }, 3000);
+    }
+  
+    function updateScoreElement() {
+      document.querySelector('.js-score').innerText = `Wins: ${score.wins}, Losses: ${score.losses}, Ties: ${score.ties}`;
+    }
+  
+    function pickComputerMove() {
+      const randomNumber = Math.random();
+      return randomNumber < 1 / 3 ? 'rock' : (randomNumber < 2 / 3 ? 'paper' : 'scissors');
+    }
+  
+    updateScoreElement();
+  </script>
+  
+  </body>
+</html>
